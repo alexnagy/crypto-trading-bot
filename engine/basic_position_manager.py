@@ -21,6 +21,8 @@ class BasicPositionManager:
         self.openMMPnlFromZero = 0
         self.maxOpenPnl = 0
         self.minOpenPnl = 0
+        self.priceAtMaxOpenPnl = None
+        self.priceAtMinOpenPnl = None
 
         self.tradedNotional = 0
         self.pnl = 0
@@ -42,6 +44,8 @@ class BasicPositionManager:
             self.openMMPnlFromZero = 0
             self.maxOpenPnl = 0
             self.minOpenPnl = 0
+            self.priceAtMaxOpenPnl = None
+            self.priceAtMinOpenPnl = None
 
         self.pnl = self.realizedPnl + self.unrealizedPnl
         self.realizedPnl = self.pnl - self.openMMPnlFromZero
@@ -49,8 +53,10 @@ class BasicPositionManager:
 
         if self.unrealizedPnl > self.maxOpenPnl:
             self.maxOpenPnl = self.unrealizedPnl
+            self.priceAtMaxOpenPnl = mtmPrice
         if self.unrealizedPnl < self.minOpenPnl:
             self.minOpenPnl = self.unrealizedPnl
+            self.priceAtMinOpenPnl = mtmPrice
         self.pnl = self.realizedPnl + self.unrealizedPnl
 
         self.gainsRelTradedBps = 0 if self.tradedNotional == 0 else self.pnl / self.tradedNotional

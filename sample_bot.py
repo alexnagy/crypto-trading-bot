@@ -1,6 +1,7 @@
 import logging
 from engine.algo_engine import AlgoEngine
 from algos.dummy_algo import DummyAlgo
+from algos.directional_sample_algo import DirectionalSampleAlgo
 
 class SampleBot:
     def __init__(self):
@@ -8,7 +9,8 @@ class SampleBot:
         logging.getLogger().addHandler(logging.StreamHandler())
 
         self.algoFactory = {
-            'dummy': DummyAlgo
+            'dummy': DummyAlgo,
+            'directionalSample': DirectionalSampleAlgo
         }
 
     def run(self, config, mdataHandlersFactory, orderHandlersFactory):

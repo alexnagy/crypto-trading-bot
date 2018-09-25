@@ -14,11 +14,12 @@ class BinanceOrdersHandler:
         self.listeners = []
 
     def start(self, apiKey, secret):
-        # TODO: start orders handler
-        pass
+        self.client = Client(apiKey, secret)
+        self.bm = BinanceSocketManager(self.client)
+        self.bm.start_user_socket(self.process_message)
+        self.bm.start()
 
     def stop(self):
-        # TODO: stop orders handler
         pass
 
     def addListener(self, listener):
@@ -57,10 +58,28 @@ class BinanceOrdersHandler:
     def placeLimitOrder(self, clOrdId, symbol,
                         side, quantity, price,
                         stopPrice, marginType, postOnly):
-        # TODO: place order
-        return None
+        try:
+            order = self.client.create_order(
+                symbol=symbol,
+                newClientOrderId=clOrdId,
+                side=Client.SIDE_BUY if BasicOrderManager.isBuy(side) else Client.SIDE_SELL,
+                type=Client.ORDER_TYPE_LIMIT,
+                price=price,
+                quantity=quantity,
+                timeInForce=Client.TIME_IN_FORCE_GTC)
+            return str(order.get("orderId"))
+        except:
+            logging.error("Failed order create for " + clOrdId)
+            logging.error(traceback.format_exc())
+            return None
 
 
     def cancelOrder(self, symbol, orderId):
-        # TODO: cancel order
-        pass
+        try:
+            self.client.cancel_order(
+                symbol=symbol,
+                orderId=int(orderId)
+            )
+        except:
+            logging.error("Failed canceling order for " + orderId)
+            logging.error(traceback.format_exc())

@@ -10,16 +10,25 @@ class BinanceMdataHandler:
         self.listeners = []
 
     def start(self):
-        # TODO: start market data handler
-        pass
+        self.client = Client("", "")
 
     def stop(self):
-        # TODO: stop market data handler
         pass
 
     def subscribe(self, currency):
-        # TODO: write market data handling code
-        pass
+        self.bm = BinanceSocketManager(self.client)
+        self.bm.start_trade_socket(currency, self.process_message)
+        self.bm.start()
+
+    def process_message(self, data):
+        trade = Trade(str(data.get("t")),
+                      Currency(self.EXCHANGE_ID, data.get("s")),
+                      float(data.get("p")),
+                      float(data.get("q")),
+                      int(data.get("T")))
+
+        for listener in self.listeners:
+            listener.onTrade(trade)
 
     def addListener(self, listener):
         self.listeners.append(listener)
